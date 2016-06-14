@@ -1,0 +1,34 @@
+<!--create-article.html-->
+
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+<h1>Create Article</h1>
+
+
+<div class="panel panel-default col-sm-12">
+  <div class="panel-body">
+    <!--If there's an error, display the error-->
+    {{ if .ErrorTitle}}
+    <p class="bg-danger">
+      {{.ErrorTitle}}: {{.ErrorMessage}}
+    </p>
+    {{end}}
+    <!--Create a form that POSTs to the `/article/create` route-->
+    <form class="form" action="/article/create" method="POST">
+      <div class="form-group">
+        <label for="title">Username</label>
+        <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+      </div>
+      <div class="form-group">
+        <label for="content">Password</label>
+        <textarea name="content" class="form-control" rows="10" id="content" placeholder="Article Content"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>  
+
+    
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}
