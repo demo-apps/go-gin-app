@@ -11,6 +11,8 @@ import (
 var router *gin.Engine
 
 func main() {
+	// Set Gin to production mode
+	gin.SetMode(gin.ReleaseMode)
 
 	// Set the router as the default one provided by Gin
 	router = gin.Default()
@@ -24,13 +26,14 @@ func main() {
 
 	// Start serving the application
 	router.Run()
-
 }
 
 // Render one of HTML, JSON or CSV based on the 'Accept' header of the request
 // If the header doesn't specify this, HTML is rendered, provided that
 // the template name is present
 func render(c *gin.Context, data gin.H, templateName string) {
+	loggedInInterface, _ := c.Get("is_logged_in")
+	data["is_logged_in"] = loggedInInterface.(bool)
 
 	switch c.Request.Header.Get("Accept") {
 	case "application/json":
@@ -43,5 +46,4 @@ func render(c *gin.Context, data gin.H, templateName string) {
 		// Respond with HTML
 		c.HTML(http.StatusOK, templateName, data)
 	}
-
 }

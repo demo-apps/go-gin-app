@@ -16,7 +16,12 @@ func showIndexPage(c *gin.Context) {
 	render(c, gin.H{
 		"title":   "Home Page",
 		"payload": articles}, "index.html")
+}
 
+func showArticleCreationPage(c *gin.Context) {
+	// Call the render function with the name of the template to render
+	render(c, gin.H{
+		"title": "Create New Article"}, "create-article.html")
 }
 
 func getArticle(c *gin.Context) {
@@ -39,12 +44,6 @@ func getArticle(c *gin.Context) {
 		// If an invalid article ID is specified in the URL, abort with an error
 		c.AbortWithStatus(http.StatusNotFound)
 	}
-}
-
-func showArticleCreationPage(c *gin.Context) {
-	// Call the render function with the name of the template to render
-	render(c, gin.H{
-		"title": "Create New Article"}, "create-article.html")
 }
 
 func createArticle(c *gin.Context) {

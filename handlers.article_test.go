@@ -38,6 +38,43 @@ func TestShowIndexPageUnauthenticated(t *testing.T) {
 	})
 }
 
+// Test that a GET request to the home page returns the home page with
+// the HTTP code 200 for an authenticated user
+func TestShowIndexPageAuthenticated(t *testing.T) {
+	// Create a response recorder
+	w := httptest.NewRecorder()
+
+	// Get a new router
+	r := getRouter(true)
+
+	// Set the token cookie to simulate an authenticated user
+	http.SetCookie(w, &http.Cookie{Name: "token", Value: "123"})
+
+	// Define the route similar to its definition in the routes file
+	r.GET("/", showIndexPage)
+
+	// Create a request to send to the above route
+	req, _ := http.NewRequest("GET", "/", nil)
+	req.Header = http.Header{"Cookie": w.HeaderMap["Set-Cookie"]}
+
+	// Create the service and process the above request.
+	r.ServeHTTP(w, req)
+
+	// Test that the http status code is 200
+	if w.Code != http.StatusOK {
+		t.Fail()
+	}
+
+	// Test that the page title is "Home Page"
+	// You can carry out a lot more detailed tests using libraries that can
+	// parse and process HTML pages
+	p, err := ioutil.ReadAll(w.Body)
+	if err != nil || strings.Index(string(p), "<title>Home Page</title>") < 0 {
+		t.Fail()
+	}
+
+}
+
 // Test that a GET request to an article page returns the article page with
 // the HTTP code 200 for an unauthenticated user
 func TestArticleUnauthenticated(t *testing.T) {
@@ -61,6 +98,43 @@ func TestArticleUnauthenticated(t *testing.T) {
 
 		return statusOK && pageOK
 	})
+}
+
+// Test that a GET request to an article page returns the article page with
+// the HTTP code 200 for an authenticated user
+func TestArticleAuthenticated(t *testing.T) {
+	// Create a response recorder
+	w := httptest.NewRecorder()
+
+	// Get a new router
+	r := getRouter(true)
+
+	// Set the token cookie to simulate an authenticated user
+	http.SetCookie(w, &http.Cookie{Name: "token", Value: "123"})
+
+	// Define the route similar to its definition in the routes file
+	r.GET("/article/view/:article_id", getArticle)
+
+	// Create a request to send to the above route
+	req, _ := http.NewRequest("GET", "/article/view/1", nil)
+	req.Header = http.Header{"Cookie": w.HeaderMap["Set-Cookie"]}
+
+	// Create the service and process the above request.
+	r.ServeHTTP(w, req)
+
+	// Test that the http status code is 200
+	if w.Code != http.StatusOK {
+		t.Fail()
+	}
+
+	// Test that the page title is "Article 1"
+	// You can carry out a lot more detailed tests using libraries that can
+	// parse and process HTML pages
+	p, err := ioutil.ReadAll(w.Body)
+	if err != nil || strings.Index(string(p), "<title>Article 1</title>") < 0 {
+		t.Fail()
+	}
+
 }
 
 // Test that a GET request to the home page returns the list of articles
@@ -121,6 +195,60 @@ func TestArticleXML(t *testing.T) {
 	})
 }
 
+// Test that a GET request to the article creation page returns the
+// article creation page with the HTTP code 200 for an authenticated user
+func TestArticleCreationPageAuthenticated(t *testing.T) {
+	// Create a response recorder
+	w := httptest.NewRecorder()
+
+	// Get a new router
+	r := getRouter(true)
+
+	// Set the token cookie to simulate an authenticated user
+	http.SetCookie(w, &http.Cookie{Name: "token", Value: "123"})
+
+	// Define the route similar to its definition in the routes file
+	r.GET("/article/create", ensureLoggedIn(), showArticleCreationPage)
+
+	// Create a request to send to the above route
+	req, _ := http.NewRequest("GET", "/article/create", nil)
+	req.Header = http.Header{"Cookie": w.HeaderMap["Set-Cookie"]}
+
+	// Create the service and process the above request.
+	r.ServeHTTP(w, req)
+
+	// Test that the http status code is 200
+	if w.Code != http.StatusOK {
+		t.Fail()
+	}
+
+	// Test that the page title is "Create New Article"
+	// You can carry out a lot more detailed tests using libraries that can
+	// parse and process HTML pages
+	p, err := ioutil.ReadAll(w.Body)
+	if err != nil || strings.Index(string(p), "<title>Create New Article</title>") < 0 {
+		t.Fail()
+	}
+
+}
+
+// Test that a GET request to the article creation page returns
+// an HTTP 401 error for an unauthorized user
+func TestArticleCreationPageUnauthenticated(t *testing.T) {
+	r := getRouter(true)
+
+	// Define the route similar to its definition in the routes file
+	r.GET("/article/create", ensureLoggedIn(), showArticleCreationPage)
+
+	// Create a request to send to the above route
+	req, _ := http.NewRequest("GET", "/article/create", nil)
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		// Test that the http status code is 401
+		return w.Code == http.StatusUnauthorized
+	})
+}
+
 // Test that a POST request to create an article returns
 // an HTTP 200 code along with a success message for an authenticated user
 func TestArticleCreationAuthenticated(t *testing.T) {
@@ -134,7 +262,7 @@ func TestArticleCreationAuthenticated(t *testing.T) {
 	http.SetCookie(w, &http.Cookie{Name: "token", Value: "123"})
 
 	// Define the route similar to its definition in the routes file
-	r.POST("/article/create", createArticle)
+	r.POST("/article/create", ensureLoggedIn(), createArticle)
 
 	// Create a request to send to the above route
 	articlePayload := getArticlePOSTPayload()
@@ -159,6 +287,26 @@ func TestArticleCreationAuthenticated(t *testing.T) {
 		t.Fail()
 	}
 
+}
+
+// Test that a POST request to create an article returns
+// an HTTP 401 error for an unauthorized user
+func TestArticleCreationUnauthenticated(t *testing.T) {
+	r := getRouter(true)
+
+	// Define the route similar to its definition in the routes file
+	r.POST("/article/create", ensureLoggedIn(), createArticle)
+
+	// Create a request to send to the above route
+	articlePayload := getArticlePOSTPayload()
+	req, _ := http.NewRequest("POST", "/article/create", strings.NewReader(articlePayload))
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("Content-Length", strconv.Itoa(len(articlePayload)))
+
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		// Test that the http status code is 401
+		return w.Code == http.StatusUnauthorized
+	})
 }
 
 func getArticlePOSTPayload() string {
