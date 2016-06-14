@@ -34,3 +34,22 @@ func TestGetArticleByID(t *testing.T) {
 		t.Fail()
 	}
 }
+
+// Test the function that creates a new article
+func TestCreateNewArticle(t *testing.T) {
+	// get the original count of articles
+	originalLength := len(getAllArticles())
+
+	// add another article
+	a, err := createNewArticle("New test title", "New test content")
+
+	// get the new count of articles
+	allArticles := getAllArticles()
+	newLength := len(allArticles)
+
+	if err != nil || newLength != originalLength+1 ||
+		a.Title != "New test title" || a.Content != "New test content" {
+
+		t.Fail()
+	}
+}
