@@ -24,6 +24,16 @@ var userList = []user{
 	user{Username: "user3", Password: "pass3"},
 }
 
+// Check if the username and password combination is valid
+func isUserValid(username, password string) bool {
+	for _, u := range userList {
+		if u.Username == username && u.Password == password {
+			return true
+		}
+	}
+	return false
+}
+
 // Register a new user with the given username and password
 // NOTE: For this demo, we
 func registerNewUser(username, password string) (*user, error) {
