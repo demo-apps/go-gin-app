@@ -25,3 +25,12 @@ func TestGetAllArticles(t *testing.T) {
 		}
 	}
 }
+
+// Test the function that fetche an Article by its ID
+func TestGetArticleByID(t *testing.T) {
+	a, err := getArticleByID(1)
+
+	if err != nil || a.ID != 1 || a.Title != "Article 1" || a.Content != "Article 1 body" {
+		t.Fail()
+	}
+}
