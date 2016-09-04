@@ -48,3 +48,8 @@ func isUsernameAvailable(username string) bool {
 	}
 	return true
 }
+
+// Check if the supplied username/password pair is valid
+func isUserValid(username, password string) bool {
+	return false
+}
