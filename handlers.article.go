@@ -40,3 +40,7 @@ func getArticle(c *gin.Context) {
 		c.AbortWithStatus(http.StatusNotFound)
 	}
 }
+
+func showArticleCreationPage(c *gin.Context) {}
+
+func createArticle(c *gin.Context) {}
