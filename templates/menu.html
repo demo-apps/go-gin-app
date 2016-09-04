@@ -8,10 +8,19 @@
       </a>
     </div>
     <ul class="nav navbar-nav">
+      {{ if .is_logged_in }}
+      <!--Display this link only when the user is logged in-->
       <li><a href="/article/create">Create Article</a></li>
+      {{end}} {{ if not .is_logged_in }}
+      <!--Display this link only when the user is not logged in-->
       <li><a href="/u/register">Register</a></li>
+      {{end}} {{ if not .is_logged_in }}
+      <!--Display this link only when the user is not logged in-->
       <li><a href="/u/login">Login</a></li>
+      {{end}} {{ if .is_logged_in }}
+      <!--Display this link only when the user is logged in-->
       <li><a href="/u/logout">Logout</a></li>
+      {{end}}
     </ul>
   </div>
 </nav>
