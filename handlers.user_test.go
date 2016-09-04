@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -38,6 +39,7 @@ func TestShowRegistrationPageUnauthenticated(t *testing.T) {
 // Test that a POST request to register returns a success message for
 // an unauthenticated user
 func TestRegisterUnauthenticated(t *testing.T) {
+	saveLists()
 	// Create a response recorder
 	w := httptest.NewRecorder()
 
@@ -68,11 +70,13 @@ func TestRegisterUnauthenticated(t *testing.T) {
 	if err != nil || strings.Index(string(p), "<title>Successful registration &amp; Login</title>") < 0 {
 		t.Fail()
 	}
+	restoreLists()
 }
 
 // Test that a POST request to register returns a an error when
 // the username is already in use
 func TestRegisterUnauthenticatedUnavailableUsername(t *testing.T) {
+	saveLists()
 	// Create a response recorder
 	w := httptest.NewRecorder()
 
@@ -95,6 +99,7 @@ func TestRegisterUnauthenticatedUnavailableUsername(t *testing.T) {
 	if w.Code != http.StatusBadRequest {
 		t.Fail()
 	}
+	restoreLists()
 }
 
 func getLoginPOSTPayload() string {
@@ -139,6 +144,7 @@ func TestShowLoginPageUnauthenticated(t *testing.T) {
 // Test that a POST request to login returns a success message for
 // an unauthenticated user
 func TestLoginUnauthenticated(t *testing.T) {
+	saveLists()
 	// Create a response recorder
 	w := httptest.NewRecorder()
 
@@ -169,11 +175,13 @@ func TestLoginUnauthenticated(t *testing.T) {
 	if err != nil || strings.Index(string(p), "<title>Successful Login</title>") < 0 {
 		t.Fail()
 	}
+	restoreLists()
 }
 
 // Test that a POST request to login returns an error when using
 // incorrect credentials
 func TestLoginUnauthenticatedIncorrectCredentials(t *testing.T) {
+	saveLists()
 	// Create a response recorder
 	w := httptest.NewRecorder()
 
@@ -194,6 +202,8 @@ func TestLoginUnauthenticatedIncorrectCredentials(t *testing.T) {
 
 	// Test that the http status code is an error
 	if w.Code != http.StatusBadRequest {
+		fmt.Println("********", w.Code)
 		t.Fail()
 	}
+	restoreLists()
 }
