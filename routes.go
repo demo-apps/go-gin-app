@@ -4,6 +4,10 @@ package main
 
 func initializeRoutes() {
 
+	// Use the setUserStatus middleware for every route to set a flag
+	// indicating whether the request was from an authenticated user or not
+	router.Use(setUserStatus())
+
 	// Handle the index route
 	router.GET("/", showIndexPage)
 
@@ -13,24 +17,24 @@ func initializeRoutes() {
 		// Handle the GET requests at /u/login
 		// Show the login page
 		// Ensure that the user is not logged in by using the middleware
-		userRoutes.GET("/login", showLoginPage)
+		userRoutes.GET("/login", ensureNotLoggedIn(), showLoginPage)
 
 		// Handle POST requests at /u/login
 		// Ensure that the user is not logged in by using the middleware
-		userRoutes.POST("/login", performLogin)
+		userRoutes.POST("/login", ensureNotLoggedIn(), performLogin)
 
 		// Handle GET requests at /u/logout
 		// Ensure that the user is logged in by using the middleware
-		userRoutes.GET("/logout", logout)
+		userRoutes.GET("/logout", ensureLoggedIn(), logout)
 
 		// Handle the GET requests at /u/register
 		// Show the registration page
 		// Ensure that the user is not logged in by using the middleware
-		userRoutes.GET("/register", showRegistrationPage)
+		userRoutes.GET("/register", ensureNotLoggedIn(), showRegistrationPage)
 
 		// Handle POST requests at /u/register
 		// Ensure that the user is not logged in by using the middleware
-		userRoutes.POST("/register", register)
+		userRoutes.POST("/register", ensureNotLoggedIn(), register)
 	}
 
 	// Group article related routes together
@@ -42,10 +46,10 @@ func initializeRoutes() {
 		// Handle the GET requests at /article/create
 		// Show the article creation page
 		// Ensure that the user is logged in by using the middleware
-		articleRoutes.GET("/create", showArticleCreationPage)
+		articleRoutes.GET("/create", ensureLoggedIn(), showArticleCreationPage)
 
 		// Handle POST requests at /article/create
 		// Ensure that the user is logged in by using the middleware
-		articleRoutes.POST("/create", createArticle)
+		articleRoutes.POST("/create", ensureLoggedIn(), createArticle)
 	}
 }
