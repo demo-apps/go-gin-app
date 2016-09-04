@@ -41,6 +41,24 @@ func getArticle(c *gin.Context) {
 	}
 }
 
-func showArticleCreationPage(c *gin.Context) {}
+func showArticleCreationPage(c *gin.Context) {
+	// Call the render function with the name of the template to render
+	render(c, gin.H{
+		"title": "Create New Article"}, "create-article.html")
+}
 
-func createArticle(c *gin.Context) {}
+func createArticle(c *gin.Context) {
+	// Obtain the POSTed title and content values
+	title := c.PostForm("title")
+	content := c.PostForm("content")
+
+	if a, err := createNewArticle(title, content); err == nil {
+		// If the article is created successfully, show success message
+		render(c, gin.H{
+			"title":   "Submission Successful",
+			"payload": a}, "submission-successful.html")
+	} else {
+		// if there was an error while creating the article, abort with an error
+		c.AbortWithStatus(http.StatusBadRequest)
+	}
+}

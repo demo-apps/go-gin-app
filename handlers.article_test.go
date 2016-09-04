@@ -124,6 +124,7 @@ func TestArticleXML(t *testing.T) {
 // Test that a POST request to create an article returns
 // an HTTP 200 code along with a success message for an authenticated user
 func TestArticleCreationAuthenticated(t *testing.T) {
+	saveLists()
 	// Create a response recorder
 	w := httptest.NewRecorder()
 
@@ -158,7 +159,7 @@ func TestArticleCreationAuthenticated(t *testing.T) {
 	if err != nil || strings.Index(string(p), "<title>Submission Successful</title>") < 0 {
 		t.Fail()
 	}
-
+	restoreLists()
 }
 
 func getArticlePOSTPayload() string {

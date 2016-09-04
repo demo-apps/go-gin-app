@@ -35,5 +35,11 @@ func getArticleByID(id int) (*article, error) {
 
 // Create a new article with the title and content provided
 func createNewArticle(title, content string) (*article, error) {
-	return nil, nil
+	// Set the ID of a new article to one more than the number of articles
+	a := article{ID: len(articleList) + 1, Title: title, Content: content}
+
+	// Add the article to the list of articles
+	articleList = append(articleList, a)
+
+	return &a, nil
 }
