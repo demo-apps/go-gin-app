@@ -26,6 +26,7 @@ func getRouter(withTemplates bool) *gin.Engine {
 	r := gin.Default()
 	if withTemplates {
 		r.LoadHTMLGlob("templates/*")
+		r.Use(setUserStatus())
 	}
 	return r
 }
@@ -55,4 +56,16 @@ func saveLists() {
 func restoreLists() {
 	userList = tmpUserList
 	articleList = tmpArticleList
+}
+
+// This is a helper function that allows us to reuse some code in the above
+// test methods
+func testMiddlewareRequest(t *testing.T, r *gin.Engine, expectedHTTPCode int) {
+	// Create a request to send to the above route
+	req, _ := http.NewRequest("GET", "/", nil)
+
+	// Process the request and test the response
+	testHTTPResponse(t, r, req, func(w *httptest.ResponseRecorder) bool {
+		return w.Code == expectedHTTPCode
+	})
 }
