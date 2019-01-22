@@ -1,3 +1,4 @@
+image: gin.dockerfile
 ports:
   - port: 8080
 checkoutLocation: "src/github.com/gitpod-io/go-gin-app-test"
