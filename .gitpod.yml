@@ -1,0 +1,12 @@
+ports:
+  - port: 8080
+checkoutLocation: "src/github.com/gitpod-io/go-gin-app-test"
+workspaceLocation: "."
+tasks:
+  - init: >
+      cd /workspace/src/github.com/gitpod-io/go-gin-app-test &&
+      go get -v ./... &&
+      go build -o app
+    command: >
+      cd /workspace/src/github.com/gitpod-io/go-gin-app-test &&
+      ./app
