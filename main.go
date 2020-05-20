@@ -8,6 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const HTTP_ENDPOINT = ":3000"
+
 var router *gin.Engine
 
 func main() {
@@ -25,7 +27,7 @@ func main() {
 	initializeRoutes()
 
 	// Start serving the application
-	router.Run()
+	router.Run(HTTP_ENDPOINT)
 }
 
 // Render one of HTML, JSON or CSV based on the 'Accept' header of the request
